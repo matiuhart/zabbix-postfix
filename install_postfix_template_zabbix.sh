@@ -2,19 +2,20 @@
 
 set -e
 
-# script que instala o template para monitoramento do postfix no zabbix agent
-# Baseado em: https://github.com/gatespb/zabbix_templates
+# Script de instalacion de monitoreo de postfix para zabbix (no incluye instalacion de zabbix agent)
+# Basado en: https://githubusercontent.com/rafael747/zabbix-postfix
 
-# scripts necessarios
+# scripts necesarios
 
-echo -e "\n#### Instalação do template para monitoramento do postfix via zabbix ####\n"
+echo -e "\n#### Descargando e instalando scripts ####\n"
 
 cd /usr/local/sbin
 
 echo -n "Baixando scripts..."
 
-wget -q -N https://raw.githubusercontent.com/rafael747/zabbix-postfix/master/zabbix_postfix.sh >/dev/null
-wget -q -N https://raw.githubusercontent.com/rafael747/zabbix-postfix/master/pygtail.py > /dev/null
+wget -q -N https://raw.githubusercontent.com/rmatiuhart/zabbix-postfix/master/zabbix_postfix.sh >/dev/null
+wget -q -N https://raw.githubusercontent.com/matiuhart/zabbix-postfix/master/zabbix_postfix_totals.sh
+wget -q -N https://raw.githubusercontent.com/matiuhart/zabbix-postfix/master/pygtail.py > /dev/null
 
 echo  "OK!"
 
@@ -25,38 +26,40 @@ chmod +x zabbix_postfix.sh
 
 cd /etc/sudoers.d/
 
-echo -n "Baixando regra de sudors..."
+echo -n "Descargando e instalando sudoers..."
 
-wget -q -N https://raw.githubusercontent.com/rafael747/zabbix-postfix/master/zabbix_postfix >/dev/null
+wget -q -N https://raw.githubusercontent.com/matiuhart/zabbix-postfix/master/zabbix_postfix >/dev/null
 
 echo "OK!"
 
 chmod 440 zabbix_postfix
 
-# Configuracao do zabbix (mailq infomacao)
+# Configuracion de zabbix (mailq infomacao)
 
 cd /etc/zabbix/zabbix_agentd.conf.d/
 
-echo -n "Baixando configuração do zabbix..."
+echo -n "Descargando e instalando archivo de user parameters para Zabbix agent..."
 
-wget -q -N https://raw.githubusercontent.com/rafael747/zabbix-postfix/master/zabbix_postfix.conf >/dev/null
+wget -q -N https://raw.githubusercontent.com/matiuhart/zabbix-postfix/master/zabbix_postfix.conf >/dev/null
 
 echo "OK!"
 
-echo -n "Reiniciando serviços..."
+echo -n "Reiniciando servicios..."
 service sudo restart >/dev/null
 service zabbix-agent restart >/dev/null
 
 echo "OK!"
 
-echo "Instale os seguintes pacotes: pflogsumm (visualizador de log do postfix) e bc ..."
+echo "Se deben instalar los siguientes paquetes que son dependencias: pflogsumm (visualizador de logs de postfix) y bc (calculadora) ..."
 echo "Debian/Ubuntu"
 echo "apt-get install pflogsumm bc"
 echo ""
 echo "RHEL/Centos"
 echo "yum install postfix-perl-scripts bc"
 
-echo -e "\nInsira a entrada a seguir na cron:\n"
+echo -e "\nSe deben adicioinar los siguientes crones:\n"
 
 echo '# Zabbix check'
 echo '*/5 * * * * /usr/local/sbin/zabbix_postfix.sh 1>/dev/null 2>/dev/null'
+echo '# Zabbix check totales enviados/recibidos diarios'
+echo '59  23    *   *  * /usr/local/sbin/zabbix_postfix_totals.sh 1>/dev/null 2>/dev/null''

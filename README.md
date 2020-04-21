@@ -1,17 +1,19 @@
 # zabbix-postfix
-Postfix template for Zabbix
+Pantilla de postfix para zabbix
 
-On Server:
- * Import **template_postfix.xml** template
+El proyecto original no traía estadisticas de mails totales enviados/recibidos, por lo que se realizó un fork y se agregaron script e items en plantilla necesarios para guardar éstas estadísticas al final del día (23.59hs)
+
+En el Server:
+ * Importar la plantilla **template_postfix.xml**
     
-On client: 
+En el cliente: 
 
- * Install **zabbix-agent**
- * Use **install_postfix_template_zabbix.sh** script 
+ * Instalar **zabbix-agent**
+ * Ejecutar **install_postfix_template_zabbix.sh** para instalar los scripts necesacios para el chequeo
  
- ### or
+ ### O
 
-    # Install the following packages
+    # Instalar paquetes necesarios
     
     # Debian/Ubuntu
     apt-get install pflogsumm bc
@@ -32,11 +34,15 @@ On client:
     service sudo restart
     service zabbix-agent restart
     
- * Add crontab entry
+ * Adicionar crontabs
  
     ```
-    # Zabbix check
+    # Zabbix check general
     */5 * * * * /usr/local/sbin/zabbix_postfix.sh 1>/dev/null 2>/dev/null'
+
+    # Zabbix check totales enviados/recibidos diarios
+    59  23    *   *  * /usr/local/sbin/zabbix_postfix_totals.sh 1>/dev/null 2>/dev/null'
+
     ```
 
 
