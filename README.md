@@ -1,7 +1,7 @@
 # zabbix-postfix
 Pantilla de Zabbix para monitoreo de Postfix
 
-El proyecto original no traía estadisticas de mails totales enviados/recibidos, por lo que se realizó un fork y se agregaron script e items en plantilla necesarios para guardar éstas estadísticas al final del día (23.59hs)
+El proyecto original no traía estadisticas de mails totales diarios enviados/recibidos, por lo que se realizó un fork y se agregaron script e items en plantilla necesarios para guardar éstas estadísticas al final del día (23.59hs)
 
 En el Server:
  * Importar la plantilla **template_postfix.xml**
